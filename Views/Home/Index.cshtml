@@ -1,0 +1,107 @@
+﻿@*@model IEnumerable<Restuarent.Models.Menu>*@
+@model X.PagedList.IPagedList<Menu>
+@using X.PagedList.Mvc.Core;
+
+@{
+    ViewData["Title"] = "Index";
+    double Total = 0;
+}
+<form asp-action="Index" asp-controller="Home" method="get">
+    <div class="text-right row">
+        <div class=" col-md-3 text-right">
+            <input type="text" name="search" value="@ViewBag.search"class="form-control" />
+        </div>
+        <div class=" col-md-3 text-right">
+            <input type="submit" value="Search" />
+        </div>
+    </div>
+</form>
+
+<p class="text-right">
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstOrDefault().Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstOrDefault().Image)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstOrDefault().Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstOrDefault().Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstOrDefault().Discount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => Total)
+            </th>
+
+
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            Total = (item.Price - (item.Discount ?? 0));
+            var photopath = "~/demoImages/" + (item.Image ?? "sample.jpg");
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    <img src="@photopath" class="rounded-circle" height="40" width="40" asp-append-version="true" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Discount)
+                </td>
+                <td>
+
+                    @Html.DisplayFor(modelItem => Total)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                </td>
+                <td>
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@Html.PagedListPager(Model, page => Url.Action("Index", 
+    new 
+    {
+        page ,
+        search = ViewBag.search
+    }),
+    new X.PagedList.Web.Common.PagedListRenderOptions
+    {
+        LinkToPreviousPageFormat = "«",
+        LinkToNextPageFormat = "»",
+        UlElementClasses = new string[] { "pagination justify-content-end" },
+        LiElementClasses = new string[] { "page-item" },
+        PageClasses = new string[] { "page-link" }
+    })
+
+<style>
+    .page-item{
+        color:red
+    }
+</style>
+
+
